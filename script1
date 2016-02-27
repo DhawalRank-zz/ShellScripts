@@ -1,0 +1,7 @@
+#!/bin/bash
+trap '' INT
+
+while :; do
+echo Hi
+echo Hello
+done

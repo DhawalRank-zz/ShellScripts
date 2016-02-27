@@ -1,0 +1,16 @@
+#!/bin/bash
+	if [[ $# -ne 4 ]] ; then
+		echo "Use: $0 input w1 w2 output"
+	fi
+	lines=`cat $1 | wc -l`
+	i=0
+	while [[ $i -lt $lines ]] ; do
+	i=$(( $i + 1 ))
+	line=`head -$i $1 | tail -1`
+	for word in $line ; do
+		if [[ $word == $2 ]] ; then
+			word=$3
+		fi
+	echo -n $word >> $4
+	done
+done

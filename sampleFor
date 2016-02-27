@@ -1,0 +1,11 @@
+#!/bin/bash
+dir1="~/Downloads"
+if [[ $# -eq 0 ]] ; then
+        echo "Usage: $0 Extentions for file"
+        exit 1
+fi
+for ext in $* ; do
+        for file in `ls $dir1 *.$ext ` ; do
+        gzip $file
+        done
+done

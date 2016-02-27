@@ -1,0 +1,163 @@
+#!/bin/bash
+usage()
+{
+	#This function is called whenever users enters invalid synopsys 
+	echo "Usage: archive -s size -t dir1 -d dir2 ext_list"
+	exit 1
+}
+makedir()
+{
+	#This function will create a dirctory whenever the destion directory is not given
+	mkdir myArchive
+}
+chkdir()
+{
+	if [ ! -d $1 ]; then
+	echo "Invalid $1 directory"								# Will enter here if $1 directory does not exists, even if it contains spaces
+	exit 2
+	fi
+	if [ ! -d $2 ]; then
+	echo "Invalid $2 directory"								# Will enter here if $2 directory does not exists, even if it contains spaces
+	exit 2
+	fi
+	
+}
+tarit()
+{
+	#tar the directory and remove original files
+	tar -cf myArchive.tar * --remove-files
+}
+if [[ $# -lt 1 ]] ; then #if there are no arguments
+	usage
+	exit 1
+fi
+if [[ $1 != '-s' && $1 != '-t' && $1 != '-d' ]] ; then    #User input is just the extension list
+	makedir
+	for ext in $* ; do 
+		for file in `ls *.$ext` ; do
+		mv $file myArchive/
+		done
+	done
+	cd myArchive/
+	tarit
+else
+	for i in $@ ; do
+		#this for loop will get the values of size, dir1, dir2 if provided
+		if [[ $1 == "-s" ]] ; then
+			size=$2
+		fi
+		if [[ $1 == "-t" ]] ; then
+			dir1=$2
+		fi
+		if [[ $1 == "-d" ]] ; then
+			dir2=$2
+		fi
+		if [[ $3 == "-s" ]] ; then
+			size=$4
+		fi
+		if [[ $3 == "-t" ]] ; then
+			dir1=$4
+		fi
+		if [[ $3 == "-d" ]] ; then
+			dir2=$4
+		fi
+		if [[ $5 == "-s" ]] ; then
+			size=$6
+		fi
+		if [[ $5 == "-t" ]] ; then
+			dir1=$6
+		fi
+		if [[ $5 == "-d" ]] ; then
+			dir2=$6
+		fi
+	done
+	if [[ $size != "" && $dir1 != "" && $dir2 != "" ]] ; then      #user inputs all the parameters
+		chkdir $dir1 $dir2
+		cd $dir1
+		for i in ${@:7} ; do
+			for file in `ls *.$i` ; do
+				ch=` cat $file | wc -c`
+				if [[ $ch -ge $size ]] ; then
+					mv $file $dir2/
+				fi
+			done
+		done
+		cd $dir2
+		tarit
+	fi
+	if [[ $size != "" && $dir1 == "" && $dir2 == "" ]] ; then    #user inputs only size option
+		makedir
+		for i in ${@:3} ; do 
+			for file in `ls *.$i` ; do
+				ch=` cat $file | wc -c`
+				if [[ $ch -ge $size ]] ; then
+					mv $file myArchive/
+				fi
+			done
+		done
+		cd myArchive/
+		tarit
+	fi
+	if [[ $size == "" && $dir1 != "" && $dir2 == "" ]] ; then     #user inputs only dir1
+		chkdir $dir1
+		makedir
+		cd $dir1
+		for i in ${@:3} ; do
+			for file in `ls *.$i` ; do
+				mv $file myArchive/
+			done
+		done
+		cd myArchive/
+		tarit
+	fi
+	if [[ $size == "" && $dir1 == "" && $dir2 != "" ]] ; then	#user inputs only dir2
+		chkdir $dir2
+		for i in ${@:3} ; do
+			for file in `ls *.$i` ; do
+				mv $file $dir2/
+			done
+		done
+		cd $dir2
+		tarit
+	fi
+	if [[ $size != "" && $dir1 != "" && $dir2 == "" ]] ; then	#user inputs size and dir1
+		chkdir $dir1
+		cd $dir1
+		makedir
+		for i in ${@:5} ; do
+			for file in `ls *.$i` ; do
+				ch=`cat $file | wc -c`
+				if [[ $ch -ge $size ]] ; then
+					mv $file myArchive/
+				fi
+			done
+		done
+		cd myArchive/
+		tarit 
+	fi
+	if [[ $size == "" && $dir1 != "" && $dir2 != "" ]] ; then	#user inputs dir1 and dir2
+		arguments
+		chkdir $dir1 $dir2
+		cd $dir1
+		for i in ${@:5} ; do
+			for file in `ls *.$i` ; do
+				mv $file $dir2/
+			done
+		done
+		cd $dir2
+		tarit
+	fi
+	if [[ $size != "" && $dir1 == "" && $dir2 != "" ]] ; then	#user inputs size and dir2
+		chkdir $dir2
+		for i in ${@:5} ; do
+			for file in `ls *.$i` ; do
+				ch=` cat $file | wc -c`
+				if [[ $ch -ge $size ]] ; then
+					mv $file $dir2/
+				fi
+			done
+		done
+		cd $dir2
+		tarit
+	fi
+fi

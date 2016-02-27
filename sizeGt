@@ -1,0 +1,9 @@
+#!/bin/bash
+for file in `ls` ; do
+	if [[ -f $file ]] ; then
+	ch=` cat $file | wc -c`
+	if [[ $ch -lt 200 ]] ; then
+	echo $file
+	fi
+	fi
+	done

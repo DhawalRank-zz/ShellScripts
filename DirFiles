@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "The file list"
+for file in `ls` ; do
+	if [[ -f $file ]] ; then	
+		echo $file
+	fi
+done
+echo "The directory list"
+for file in `ls` ; do
+	if [[ -d $file ]] ; then
+		echo $file
+	fi
+done

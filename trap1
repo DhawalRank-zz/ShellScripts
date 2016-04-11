@@ -1,0 +1,15 @@
+trap '' INT
+clear
+secretPass="Dhawal92"
+stty -echo
+echo -n "Enter your Password:"
+read entPass
+while [ $secretPass != $entPass ]
+	do
+		echo "Wrong Password Try again!!"
+		echo "Enter your Password:"
+		read entPass
+		echo " "
+	done
+	echo "Welcome back!!!"
+exit 1
